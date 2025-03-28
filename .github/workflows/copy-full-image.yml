@@ -1,12 +1,11 @@
 name: Copy full images
 
-on:
-  #workflow_dispatch:
+on: workflow_dispatch
   #  inputs:
   #    version:
   #      type: string
   #      default: latest
-  workflow_call:
+  #workflow_call:
   #schedule:
   #  - cron: 0 12 */7 * *
 
