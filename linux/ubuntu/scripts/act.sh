@@ -56,6 +56,7 @@ packages=(
   apt-transport-https
   libyaml-0-2
   zstd
+  rsync
   zip
   unzip
   xz-utils
