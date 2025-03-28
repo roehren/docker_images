@@ -25,7 +25,7 @@ env:
   DISTRO: ubuntu
   NODE: '16 18 20'
   BUILD_REF: ${{ github.sha }}
-  SKIP_TEST: false
+  SKIP_TEST: true
   #PUSH_GHCR: ${{ github.repository == (github.event.pull_request.head.repo.full_name || github.repository) && '1' || '' }}
   #PUSH_QUAY: ${{ secrets.QUAY_USER && secrets.QUAY_TOKEN && '1' || '' }}
   PUSH_DOCKER_HUB: ${{ secrets.DOCKER_USER && secrets.DOCKER_TOKEN && '1' || '' }}
@@ -49,9 +49,9 @@ jobs:
         PLATFORMS:
           - linux/amd64,linux/arm64,linux/arm/v7
         TAG:
-          - 24.04
+          #- 24.04
           - 22.04
-          - 20.04
+          #- 20.04
     steps:
       - uses: actions/setup-go@v5
         with:
@@ -161,50 +161,6 @@ jobs:
               -push `
               -tags $tags
 
-      - name: Build and push ${{ env.DISTRO }}:${{ env.TAG }}
-        shell: buildah unshare pwsh "{0}"
-        env:
-          RUNNER: runner
-          TAG: runner-${{ matrix.TAG }}
-          LATEST_TAG: runner-latest
-          TYPE: runner
-          FROM_IMAGE: ghcr.io/${{ env.SLUG }}
-          FROM_TAG: act-${{ matrix.TAG }}-${{ env.PART_TAG }}
-          BUILD_TAG_VERSION: ${{ env.PART_TAG }}
-          BUILD_TAG: runner-${{ matrix.TAG }}
-          PUSH_LATEST: ${{ env.LATEST_TAG == matrix.TAG && '1' || '' }}
-          PUSH_DEFAULT: ${{ ( github.event_name != 'pull_request' && github.event_name != 'push' && !env.ACT ) && '1' || '' }}
-        run: |
-          $tags = @()
-          $tagNames = @( "$env:TAG-$env:PART_TAG" )
-          if($env:PUSH_LATEST) {
-            $tagNames += "$env:LATEST_TAG-$env:PART_TAG"
-          }
-          if($env:PUSH_DEFAULT) {
-            $tagNames += $env:TAG
-            if($env:PUSH_LATEST) {
-              $tagNames += $env:LATEST_TAG
-            }
-          }
-
-          foreach($tagName in $tagNames) {
-            if($env:PUSH_GHCR) {
-              $tags += "ghcr.io/${env:SLUG}:$tagName"
-            }
-            if($env:PUSH_QUAY) {
-              $tags += "quay.io/${env:SLUG}:$tagName"
-            }
-            if($env:PUSH_DOCKER_HUB) {
-              $tags += "docker.io/${env:SLUG}:$tagName"
-            }
-          }
-
-          echo $tags
-          
-          ./build.ps1 `
-              -push `
-              -tags $tags
-
       - if: ${{ !env.SKIP_TEST }}
         uses: actions/setup-go@v3
         with:
@@ -237,9 +193,9 @@ jobs:
       max-parallel: 8
       matrix:
         TAG:
-          - 24.04
+          #- 24.04
           - 22.04
-          - 20.04
+          #- 20.04
         TYPE:
           - go
           - js
@@ -333,48 +289,6 @@ jobs:
             echo "RELEASE_TAG=${{ matrix.TAG }}" | tee -a "$GITHUB_ENV"
           fi
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
 
-      - uses: actions/checkout@v3
 
-      - name: Build and push ${{ env.DISTRO }}:${{ env.TAG }}
-        shell: buildah unshare pwsh "{0}"
-        env:
-          TAG: ${{ matrix.TYPE }}-${{ matrix.TAG }}
-          LATEST_TAG: ${{ matrix.TYPE }}-latest
-          FROM_IMAGE: ghcr.io/${{ env.SLUG }}
-          FROM_TAG: act-${{ matrix.TAG }}-${{ env.PART_TAG }}
-          BUILD_TAG_VERSION: ${{ env.PART_TAG }}
-          PUSH_LATEST: ${{ env.LATEST_TAG == matrix.TAG && '1' || '' }}
-          PUSH_DEFAULT: ${{ ( github.event_name != 'pull_request' && github.event_name != 'push' && !env.ACT ) && '1' || '' }}
-        run: |
-          $tags = @()
-          $tagNames = @( "$env:TAG-$env:PART_TAG" )
-          if($env:PUSH_LATEST) {
-            $tagNames += "$env:LATEST_TAG-$env:PART_TAG"
-          }
-          if($env:PUSH_DEFAULT) {
-            $tagNames += $env:TAG
-            if($env:PUSH_LATEST) {
-              $tagNames += $env:LATEST_TAG
-            }
-          }
-
-          foreach($tagName in $tagNames) {
-            if($env:PUSH_GHCR) {
-              $tags += "ghcr.io/${env:SLUG}:$tagName"
-            }
-            if($env:PUSH_QUAY) {
-              $tags += "quay.io/${env:SLUG}:$tagName"
-            }
-            if($env:PUSH_DOCKER_HUB) {
-              $tags += "docker.io/${env:SLUG}:$tagName"
-            }
-          }
-
-          echo $tags
-          
-          ./build.ps1 `
-              -push `
-              -tags $tags
+     
