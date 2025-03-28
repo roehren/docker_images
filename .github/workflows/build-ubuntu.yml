@@ -4,19 +4,19 @@ on:
   workflow_call:
   #schedule:
   #  - cron: 0 12 */7 * *
-  push:
-    paths:
-      - '.github/workflows/build-ubuntu.yml'
-      - 'linux/ubuntu/**'
-      - 'build.ps1'
-    branches:
-      - 'master'
-  pull_request:
-    paths:
-      - '.github/workflows/build-ubuntu.yml'
-      - 'linux/ubuntu/**'
-      - 'build.ps1'
-  workflow_dispatch:
+  #push:
+  #  paths:
+  #    - '.github/workflows/build-ubuntu.yml'
+  #    - 'linux/ubuntu/**'
+  #    - 'build.ps1'
+  #  branches:
+  #    - 'master'
+  #pull_request:
+  #  paths:
+  #    - '.github/workflows/build-ubuntu.yml'
+  #    - 'linux/ubuntu/**'
+  #    - 'build.ps1'
+  #workflow_dispatch:
 
 env:
   IMAGE_LABEL_OWNER: ${{ github.repository_owner }}
