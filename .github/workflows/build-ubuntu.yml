@@ -1,8 +1,9 @@
 name: Build ubuntu images
 
 on:
-  schedule:
-    - cron: 0 12 */7 * *
+  workflow_call:
+  #schedule:
+  #  - cron: 0 12 */7 * *
   push:
     paths:
       - '.github/workflows/build-ubuntu.yml'
