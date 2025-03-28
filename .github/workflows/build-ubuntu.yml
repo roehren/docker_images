@@ -1,7 +1,6 @@
 name: Build ubuntu images
 
-on:
-  workflow_call:
+on: workflow_dispatch
   #schedule:
   #  - cron: 0 12 */7 * *
   #push:
